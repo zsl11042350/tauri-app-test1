@@ -19,6 +19,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.x.x
+
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
         # You can remove libayatana-appindicator3-dev if you don't use the system tray feature.
