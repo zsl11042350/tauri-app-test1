@@ -1,10 +1,44 @@
+import path from "path";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import AutoImport from "unplugin-auto-import/vite";
+// 引入Unocss
+import Unocss from 'unocss/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import Pages from 'vite-plugin-pages'
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [vue()],
+  base: "./",
+  resolve: {
+    // 忽略后缀名的配置选项, 添加 .vue 选项时要记得原本默认忽略的选项也要手动写入
+    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
+    alias: [
+      {
+        find: "~/",
+        replacement: `${path.resolve(__dirname, "src")}/`,
+      },
+    ],
+  },
+  plugins: [
+    vue(),
+    Unocss(),
 
+    AutoImport({
+      imports: ["vue", "vue/macros", "@vueuse/core"],
+      resolvers: [ElementPlusResolver()],
+      dts: true,
+      dirs: ["./src/composables","./src/store"],
+      vueTemplate: true,
+    }),
+
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Pages({})
+  ],
+  
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
   clearScreen: false,
